@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1 class="title">MVC Segundo Parcial</h1>
+    {% if current_user.is_authenticated %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                {% if current_user.has_role("admin") %}
+                <a class="navbar-item" href="{{ url_for('patient.create_patient') }}">
+                    Crear Paciente
+                </a>
+                {% endif %}
+                <a class="navbar-item" href="{{ url_for('patient.list_patients') }}">
+                    Lista de Pacientes
+                </a>
+                <a class="navbar-item" href="{{ url_for('user.logout') }}">
+                    Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    <div class="columns is-mobile is-centered">
+        <div class="column is-half">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SECRET_KEY'] = 'your_secret_key'
+
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+# Define your models here
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Implement user loading logic here
+    pass
+
+@app.route('/')
+def index():
+    return render_template('login.html')
+
+@app.route('/users', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Implement user registration logic here
+        pass
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # Implement user authentication logic here
+        pass
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.route('/patients')
+@login_required
+def list_patients():
+    # Implement patient listing logic here
+    pass
+
+@app.route('/patients/create', methods=['GET', 'POST'])
+@login_required
+def create_patient():
+    if request.method == 'POST':
+        # Implement patient creation logic here
+        pass
+    return render_template('create_patient.html')
+
+@app.route('/patients/<int:id>/update', methods=['GET', 'POST'])
+@login_required
+def update_patient(id):
+    if request.method == 'POST':
+        # Implement patient update logic here
+        pass
+    return render_template('update_patient.html')
+
+@app.route('/patients/<int:id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_patient(id):
+    if request.method == 'POST':
+        # Implement patient deletion logic here
+        pass
+    return render_template('delete_patient.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
